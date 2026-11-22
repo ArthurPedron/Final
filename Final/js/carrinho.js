@@ -5,6 +5,12 @@ let carrinho = [];
 let pedidosDemonstrativos = [];
 
 let sequenciaPedidos = 1;
+let pagamentoAprovadoDemonstrativo = false;
+let cupomPromocionalAplicado = null;
+
+const cuponsPromocionais = {
+    NORDESTE10: { codigo: "NORDESTE10", percentual: 10, descontoMaximo: 15, pedidoMinimo: 30, descricao: "10% de desconto (limitado a R$ 15,00)" }
+};
 
 // Etapas possíveis do pedido
 const etapasPedido = [
@@ -192,6 +198,13 @@ function finalizarPedido() {
     if (!modal) return;
 
     modal.hidden = false;
+    pagamentoAprovadoDemonstrativo = false;
+    document.getElementById("statusPagamento").textContent = "";
+    document.getElementById("btnSolicitarPagamento").textContent = "Enviar solicitação de pagamento";
+    document.getElementById("codigoCupom").value = cupomPromocionalAplicado?.codigo || "";
+    document.getElementById("mensagemCupom").textContent = "";
+    document.getElementById("resumoDescontoCupom").hidden = true;
+    if (cupomPromocionalAplicado) aplicarCupomPromocional();
 
     document.getElementById("formularioPedido").hidden = false;
     document.getElementById("resultadoPedido").hidden = true;
@@ -221,11 +234,54 @@ function fecharFinalizacao() {
     document.getElementById("formularioPedido").hidden = false;
     document.getElementById("resultadoPedido").hidden = true;
     document.getElementById("resumoPedido").textContent = "";
+    pagamentoAprovadoDemonstrativo = false;
+    cupomPromocionalAplicado = null;
+    document.getElementById("statusPagamento").textContent = "";
 
     const privacidadeAberta = !document.getElementById("modalPrivacidade")?.hidden;
     document.body.style.overflow = privacidadeAberta ? "hidden" : "";
 
     document.getElementById("btnCarrinho")?.focus();
+}
+
+function selecionarCupom(codigo) {
+    const campo = document.getElementById("codigoCupom");
+    if (!campo) return;
+    campo.value = codigo;
+    cupomPromocionalAplicado = cuponsPromocionais[codigo] || null;
+    if (!document.getElementById("modalFinalizacao").hidden) aplicarCupomPromocional();
+}
+
+function aplicarCupomPromocional() {
+    const campo = document.getElementById("codigoCupom");
+    const mensagem = document.getElementById("mensagemCupom");
+    const codigo = campo.value.trim().toUpperCase();
+    const cupom = cuponsPromocionais[codigo];
+
+    if (!cupom) {
+        cupomPromocionalAplicado = null;
+        mensagem.textContent = "Cupom inválido ou não reconhecido.";
+        document.getElementById("resumoDescontoCupom").hidden = true;
+        return;
+    }
+    if (calcularTotal() < cupom.pedidoMinimo) {
+        cupomPromocionalAplicado = null;
+        mensagem.textContent = "O pedido mínimo para este cupom é R$ 30,00.";
+        document.getElementById("resumoDescontoCupom").hidden = true;
+        return;
+    }
+
+    cupomPromocionalAplicado = cupom;
+    mensagem.textContent = "Cupom aplicado com sucesso.";
+    const desconto = calcularDescontoPromocional(calcularTotal());
+    const resumo = document.getElementById("resumoDescontoCupom");
+    resumo.textContent = cupom.descricao + ": R$ " + desconto.toFixed(2).replace(".", ",");
+    resumo.hidden = false;
+}
+
+function calcularDescontoPromocional(total) {
+    if (!cupomPromocionalAplicado || total < cupomPromocionalAplicado.pedidoMinimo) return 0;
+    return Math.min(total * cupomPromocionalAplicado.percentual / 100, cupomPromocionalAplicado.descontoMaximo);
 }
 
 // Confirmar pedido demonstrativo
@@ -275,6 +331,32 @@ function confirmarPedido(event) {
         }
     }
 
+    // Simula o envio da solicitação e o retorno de um serviço externo.
+    // Nenhuma cobrança ou transmissão financeira real é realizada.
+    if (!pagamentoAprovadoDemonstrativo) {
+        const forma = document.getElementById("formaPagamento").value;
+        const retorno = document.getElementById("retornoPagamentoSimulado").value;
+        const status = document.getElementById("statusPagamento");
+        const botao = document.getElementById("btnSolicitarPagamento");
+        status.className = "status-pagamento";
+
+        if (retorno === "aprovado") {
+            pagamentoAprovadoDemonstrativo = true;
+            status.classList.add("pagamento-aprovado");
+            status.textContent = "Solicitação demonstrativa enviada via " + forma + ". Retorno do serviço: pagamento aprovado. Clique novamente para concluir o pedido.";
+            botao.textContent = "Confirmar pedido";
+        } else if (retorno === "recusado") {
+            status.classList.add("pagamento-recusado");
+            status.textContent = "Solicitação demonstrativa enviada via " + forma + ". Retorno do serviço: pagamento recusado. Altere a simulação e tente novamente.";
+            botao.textContent = "Tentar pagamento novamente";
+        } else {
+            status.classList.add("pagamento-pendente");
+            status.textContent = "Solicitação demonstrativa enviada via " + forma + ". Retorno do serviço: aguardando confirmação. Nenhum pedido foi confirmado.";
+            botao.textContent = "Consultar retorno novamente";
+        }
+        return;
+    }
+
     const unidadeDoPedido = unidades.find(
         unidade => unidade.id === unidadeSelecionada
     );
@@ -287,7 +369,9 @@ function confirmarPedido(event) {
     const totalOriginal = calcularTotal();
     const descontoFidelidade = typeof calcularDescontoFidelidade === "function"
         ? calcularDescontoFidelidade(totalOriginal) : 0;
-    const totalPedido = Math.max(0, totalOriginal - descontoFidelidade);
+    const descontoPromocional = calcularDescontoPromocional(totalOriginal);
+    const descontoTotal = Math.min(totalOriginal, descontoFidelidade + descontoPromocional);
+    const totalPedido = Math.max(0, totalOriginal - descontoTotal);
 
     const itensPedido = carrinho.map(item => ({
         id: item.id,
@@ -314,7 +398,10 @@ function confirmarPedido(event) {
 
         totalOriginal,
         descontoFidelidade,
+        descontoPromocional,
         total: totalPedido,
+        formaPagamento: document.getElementById("formaPagamento").value,
+        statusPagamento: "Aprovado (simulação)",
 
         status: "Recebido",
 
@@ -373,6 +460,10 @@ function confirmarPedido(event) {
 
     });
 
+    if (descontoFidelidade > 0) resumo += "\nDESCONTO DE FIDELIDADE: R$ " + descontoFidelidade.toFixed(2).replace(".", ",");
+    if (descontoPromocional > 0) resumo += "\nDESCONTO PROMOCIONAL: R$ " + descontoPromocional.toFixed(2).replace(".", ",");
+    resumo += "\nFORMA DE PAGAMENTO: " + pedido.formaPagamento;
+    resumo += "\nPAGAMENTO: Aprovado (simulação)";
     resumo += "\nTOTAL: R$ " +
         totalPedido.toFixed(2).replace(".", ",");
     if (usuarioAtual) {
@@ -396,8 +487,10 @@ function confirmarPedido(event) {
     // Limpa os campos pessoais do formulário
     formulario.reset();
 
-    // Esvazia o carrinho
+    // Esvazia o carrinho e reinicia os controles demonstrativos.
     carrinho = [];
+    pagamentoAprovadoDemonstrativo = false;
+    cupomPromocionalAplicado = null;
     if (typeof atualizarRecompensasCheckout === "function") {
         atualizarRecompensasCheckout();
     }
