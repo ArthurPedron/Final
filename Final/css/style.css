@@ -919,3 +919,57 @@ button {
 .recompensa-checkout button:disabled { background: #999; cursor: not-allowed; }
 #resumoDescontoFidelidade { margin-top: 14px; padding: 12px; border: 1px solid #713b25; border-radius: 8px; }
 #resumoDescontoFidelidade[hidden] { display: none !important; }
+
+
+/* Campanhas promocionais */
+.secao-campanhas { width: min(100% - 30px, 1100px); margin: 24px auto; }
+.cabecalho-campanhas { margin-bottom: 14px; }
+.cabecalho-campanhas h2, .cartao-campanha h3 { color: #713b25; }
+.cabecalho-campanhas p, .cartao-campanha p { margin-top: 7px; line-height: 1.5; color: #5d5149; }
+.cartao-campanha { display: flex; flex-direction: column; gap: 16px; padding: 20px; border: 1px solid #e5d8c8; border-radius: 12px; background: #fff; box-shadow: 0 3px 10px #00000010; }
+.selo-campanha { display: inline-block; margin-bottom: 10px; padding: 5px 9px; border-radius: 20px; background: #f5e6c9; color: #713b25; font-size: 12px; font-weight: bold; }
+.cartao-campanha small { display: block; margin-top: 8px; color: #6c625b; }
+.cartao-campanha button, .linha-cupom button { background: #713b25; color: #fff; font-weight: bold; }
+.area-cupom, .area-pagamento { margin-top: 20px; padding: 18px; border-radius: 10px; background: #f8f3e9; }
+.area-cupom h3, .area-pagamento h3 { color: #713b25; margin-bottom: 10px; }
+.area-cupom label, .area-pagamento label { display: block; margin: 12px 0 6px; font-weight: bold; }
+.linha-cupom { display: flex; flex-direction: column; gap: 8px; }
+.linha-cupom input, .area-pagamento select { width: 100%; min-height: 44px; padding: 10px; border: 1px solid #cfc4b8; border-radius: 7px; background: #fff; font: inherit; }
+.area-cupom output, #resumoDescontoCupom { display: block; margin-top: 9px; color: #267342; font-weight: bold; }
+#resumoDescontoCupom[hidden] { display: none; }
+.area-pagamento > p { line-height: 1.5; color: #5d5149; }
+.nota-pagamento { margin-top: 10px; font-size: 13px; }
+.status-pagamento { display: block; margin-top: 12px; padding: 10px; border-radius: 7px; line-height: 1.5; }
+.status-pagamento:empty { display: none; }
+.pagamento-aprovado { background: #e0f1e5; color: #21633a; }
+.pagamento-recusado { background: #f8e3e3; color: #922b2b; }
+.pagamento-pendente { background: #fff1d6; color: #80520d; }
+
+/* Abordagem mobile-first: estilos base priorizam telas pequenas. */
+@media (max-width: 767px) {
+    header { flex-direction: column; align-items: stretch; gap: 14px; padding: 16px; }
+    header h1 { text-align: center; }
+    .acoes-cabecalho { flex-direction: column; align-items: stretch; width: 100%; }
+    .acoes-cabecalho button { width: 100%; }
+    .cardapio { grid-template-columns: 1fr; padding: 18px 15px; gap: 14px; }
+    .categorias { padding: 16px 12px; gap: 8px; }
+    .categorias button { flex: 1 1 42%; }
+    .banner { padding: 38px 18px; }
+    .seletor-unidade { width: calc(100% - 30px); padding: 18px; }
+    .campos-estoque { grid-template-columns: 1fr; }
+    .cartao-campanha { padding: 16px; }
+    .linha-cupom { flex-direction: column; }
+    .linha-cupom button, .cartao-campanha button { width: 100%; min-height: 44px; }
+    .conteudo-finalizacao, .conteudo-privacidade, .conteudo-acompanhamento { padding: 16px; }
+}
+@media (min-width: 768px) {
+    header { flex-direction: row; align-items: center; }
+    .acoes-cabecalho { flex-direction: row; width: auto; }
+    .acoes-cabecalho button { width: auto; }
+    .cardapio { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+    .campos-estoque { grid-template-columns: 2fr 1fr auto; }
+    .cartao-campanha { flex-direction: row; justify-content: space-between; align-items: center; }
+    .cartao-campanha button { min-width: 220px; }
+    .linha-cupom { flex-direction: row; }
+    .linha-cupom button { min-width: 120px; }
+}
