@@ -369,8 +369,11 @@ function confirmarPedido(event) {
     const totalOriginal = calcularTotal();
     const descontoFidelidade = typeof calcularDescontoFidelidade === "function"
         ? calcularDescontoFidelidade(totalOriginal) : 0;
-    const descontoPromocional = calcularDescontoPromocional(totalOriginal);
-    const descontoTotal = Math.min(totalOriginal, descontoFidelidade + descontoPromocional);
+    const descontoPromocional = Math.min(
+        calcularDescontoPromocional(totalOriginal),
+        Math.max(0, totalOriginal - descontoFidelidade)
+    );
+    const descontoTotal = descontoFidelidade + descontoPromocional;
     const totalPedido = Math.max(0, totalOriginal - descontoTotal);
 
     const itensPedido = carrinho.map(item => ({
@@ -844,6 +847,17 @@ document.getElementById("modalAcompanhamento")
         }
 
     });
+
+// Alterar a forma de pagamento ou o retorno invalida a aprovação simulada anterior.
+["formaPagamento", "retornoPagamentoSimulado"].forEach(id => {
+    document.getElementById(id)?.addEventListener("change", function() {
+        pagamentoAprovadoDemonstrativo = false;
+        const status = document.getElementById("statusPagamento");
+        status.textContent = "";
+        status.className = "status-pagamento";
+        document.getElementById("btnSolicitarPagamento").textContent = "Enviar solicitação de pagamento";
+    });
+});
 
 // Fechar modal clicando fora do conteúdo
 document.getElementById("modalFinalizacao")
