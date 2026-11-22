@@ -1,0 +1,910 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f8f3e9;
+}
+
+header {
+    background: #713b25;
+    color: white;
+    padding: 20px 5%;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+button {
+    cursor: pointer;
+    border: none;
+    padding: 12px 18px;
+    border-radius: 8px;
+}
+
+.banner {
+    background: #d99b46;
+    padding: 60px 30px;
+    text-align: center;
+    color: white;
+}
+
+.categorias {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 25px;
+}
+
+.cardapio {
+    display: grid;
+    grid-template-columns:
+        repeat(auto-fit, minmax(220px, 1fr));
+
+    gap: 20px;
+    padding: 30px 5%;
+}
+
+.produto {
+    background: white;
+    padding: 18px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 3px 10px #00000015;
+}
+
+.produto img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.produto button {
+    background: #713b25;
+    color: white;
+    margin-top: 12px;
+}
+
+@media (max-width: 600px) {
+    header {
+        flex-direction: column;
+        gap: 15px;
+    }
+}
+/* Fundo escuro */
+#fundoCarrinho {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: none;
+    background: rgba(0, 0, 0, 0.55);
+
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+
+    z-index: 9998;
+}
+
+#fundoCarrinho.ativo {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+#areaCarrinho {
+    position: fixed;
+    top: 0;
+    right: 0;
+
+    width: 400px;
+    max-width: 90vw;
+    height: 100vh;
+    height: 100dvh;
+
+    background: white;
+    padding: 25px;
+
+    display: flex;
+    flex-direction: column;
+
+    transform: translateX(100%);
+    visibility: hidden;
+
+    z-index: 9999;
+
+    transition: transform 0.3s ease, visibility 0.3s ease;
+}
+
+#areaCarrinho.ativo {
+    transform: translateX(0);
+    visibility: visible;
+}
+/*
+#fundoCarrinho.ativo {
+    opacity: 1;
+    visibility: visible;
+}
+*/
+/* Cabeçalho */
+.cabecalhoCarrinho {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    margin-bottom: 25px;
+}
+
+.fechar {
+    background: #713b25;
+    color: white;
+    font-size: 18px;
+}
+
+/* Lista de produtos */
+#listaCarrinho {
+    flex: 1;
+    overflow-y: auto;
+}
+
+/* Rodapé */
+.rodapeCarrinho {
+    border-top: 1px solid #ddd;
+    padding-top: 20px;
+}
+
+.rodapeCarrinho button {
+    width: 100%;
+    background: #713b25;
+    color: white;
+
+    margin-top: 15px;
+    padding: 15px;
+}
+
+/* Rodapé */
+.rodape {
+    background: #713b25;
+    color: white;
+    text-align: center;
+    padding: 25px 15px;
+    margin-top: 30px;
+}
+
+.btn-privacidade {
+    background: transparent;
+    color: white;
+    text-decoration: underline;
+    margin: 10px 0;
+}
+
+/* Modal de privacidade */
+.modal-privacidade {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 15px;
+    z-index: 10001;
+}
+
+.modal-privacidade[hidden] {
+    display: none;
+}
+
+.conteudo-privacidade {
+    background: white;
+    width: 100%;
+    max-width: 650px;
+    max-height: 85vh;
+    overflow-y: auto;
+
+    padding: 25px;
+    border-radius: 12px;
+}
+
+.cabecalho-privacidade {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    color: #713b25;
+}
+
+.texto-privacidade h3 {
+    color: #713b25;
+    margin-top: 20px;
+    margin-bottom: 8px;
+}
+
+.texto-privacidade p {
+    line-height: 1.6;
+    margin-bottom: 12px;
+    color: #444;
+}
+
+.btn-entendi {
+    width: 100%;
+    background: #713b25;
+    color: white;
+    margin-top: 20px;
+}
+
+.btn-entendi:hover,
+.rodape button:hover {
+    opacity: 0.85;
+}
+
+@media (max-width: 600px) {
+    .conteudo-privacidade {
+        padding: 18px;
+        max-height: 90vh;
+    }
+}
+
+/* Modal de finalização */
+.modal-finalizacao {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.65);
+}
+
+.modal-finalizacao[hidden] {
+    display: none;
+}
+
+.conteudo-finalizacao {
+    background: white;
+    width: 100%;
+    max-width: 550px;
+    max-height: 90vh;
+    overflow-y: auto;
+
+    padding: 25px;
+    border-radius: 12px;
+}
+
+.cabecalho-finalizacao {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    color: #713b25;
+}
+
+.descricao-formulario {
+    margin: 10px 0 20px;
+    color: #666;
+}
+
+#formPedido label {
+    display: block;
+    font-weight: bold;
+    margin: 15px 0 7px;
+}
+
+#formPedido input:not([type="checkbox"]),
+#formPedido textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+}
+
+#formPedido textarea {
+    resize: vertical;
+}
+
+.aviso-lgpd {
+    background: #f8f3e9;
+    border-left: 4px solid #713b25;
+    padding: 15px;
+    margin-top: 22px;
+    border-radius: 6px;
+}
+
+.aviso-lgpd h3 {
+    color: #713b25;
+    margin-bottom: 10px;
+}
+
+.aviso-lgpd p {
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 8px;
+}
+
+.link-politica {
+    background: none;
+    padding: 0;
+    color: #713b25;
+    text-decoration: underline;
+}
+
+.confirmacao-privacidade {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.confirmacao-privacidade input {
+    margin-top: 4px;
+}
+
+.confirmacao-privacidade label {
+    font-size: 14px;
+    line-height: 1.4;
+    margin: 0 !important;
+}
+
+.btn-confirmar {
+    width: 100%;
+    padding: 15px;
+    background: #713b25;
+    color: white;
+    margin-top: 20px;
+}
+
+#resultadoPedido {
+    line-height: 1.6;
+}
+
+#resultadoPedido h3 {
+    color: #713b25;
+    margin-bottom: 12px;
+}
+
+#resumoPedido {
+    background: #f8f3e9;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 15px;
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 600px) {
+    .conteudo-finalizacao {
+        padding: 18px;
+        max-height: 92vh;
+    }
+}
+
+
+/* Seleção de unidade */
+.seletor-unidade {
+    width: min(90%, 760px);
+    margin: 28px auto 8px;
+    padding: 22px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px #00000012;
+}
+
+.seletor-unidade h2 { color: #713b25; margin-bottom: 7px; }
+.seletor-unidade p { color: #666; line-height: 1.5; }
+.seletor-unidade label, .campos-estoque label {
+    display: block;
+    font-weight: bold;
+    margin: 14px 0 7px;
+}
+
+.seletor-unidade select, .campos-estoque select, .campos-estoque input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background: white;
+    font-size: 15px;
+}
+
+.informacao-unidade { margin-top: 10px; font-size: 14px; }
+
+/* Situação do produto e imagem ilustrativa */
+.imagem-placeholder {
+    height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f1e5d4;
+    border-radius: 8px;
+    font-size: 58px;
+    margin-bottom: 12px;
+}
+
+.preco-produto { margin-top: 8px; font-weight: bold; }
+.status-produto { margin-top: 9px; font-size: 13px; font-weight: bold; }
+.status-produto.disponivel { color: #267342; }
+.status-produto.indisponivel { color: #a12b24; }
+.produto-indisponivel { opacity: .82; }
+.produto button:disabled { background: #888; cursor: not-allowed; }
+.sem-produtos { grid-column: 1 / -1; text-align: center; padding: 25px; }
+
+/* Atualização de estoque demonstrativa */
+.painel-estoque {
+    width: min(90%, 900px);
+    margin: 10px auto 35px;
+    padding: 18px 22px;
+    background: #fff;
+    border: 1px solid #e2d6c8;
+    border-radius: 10px;
+}
+.painel-estoque summary { cursor: pointer; color: #713b25; font-weight: bold; }
+.painel-estoque > p { margin-top: 12px; color: #666; line-height: 1.5; font-size: 14px; }
+.campos-estoque { display: grid; grid-template-columns: 2fr 1fr auto; gap: 12px; align-items: end; }
+.campos-estoque button { background: #713b25; color: white; min-height: 43px; }
+.mensagem-estoque { color: #267342; font-weight: bold; }
+
+@media (max-width: 700px) {
+    .campos-estoque { grid-template-columns: 1fr; }
+    .seletor-unidade { width: 90%; padding: 18px; }
+}
+/* Ações do cabeçalho */
+.acoes-cabecalho {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.acoes-cabecalho button {
+    background: #f8f3e9;
+    color: #713b25;
+    font-weight: bold;
+}
+
+
+/* Modal de acompanhamento */
+.modal-acompanhamento {
+    position: fixed;
+    inset: 0;
+    z-index: 10002;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+    background: rgba(0, 0, 0, .65);
+}
+
+.modal-acompanhamento[hidden] {
+    display: none;
+}
+
+.conteudo-acompanhamento {
+    width: 100%;
+    max-width: 760px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 25px;
+    border-radius: 12px;
+    background: #fff;
+}
+
+.cabecalho-acompanhamento {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 20px;
+    color: #713b25;
+}
+
+.cabecalho-acompanhamento p {
+    margin-top: 7px;
+    color: #666;
+    line-height: 1.5;
+}
+
+.sem-pedidos {
+    padding: 20px;
+    border-radius: 8px;
+    background: #f8f3e9;
+    color: #555;
+    line-height: 1.5;
+}
+
+
+/* Cartão de pedido */
+.cartao-pedido {
+    border: 1px solid #e5d9cc;
+    border-radius: 10px;
+    padding: 18px;
+    margin-bottom: 16px;
+}
+
+.topo-pedido {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.topo-pedido h3 {
+    color: #713b25;
+}
+
+.topo-pedido p {
+    margin-top: 5px;
+    color: #666;
+    font-size: 14px;
+}
+
+
+/* Status */
+.badge-status {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 20px;
+    background: #f5e6c9;
+    color: #754515;
+    font-size: 13px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.badge-status.status-entregue {
+    background: #dcefe1;
+    color: #21633a;
+}
+
+.badge-status.status-cancelado {
+    background: #f6dddd;
+    color: #922b2b;
+}
+
+
+/* Linha de etapas */
+.linha-etapas {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+    margin: 22px 0 16px;
+}
+
+.etapa-pedido {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 7px;
+    text-align: center;
+    color: #888;
+    font-size: 12px;
+}
+
+.marcador-etapa {
+    display: grid;
+    place-items: center;
+    width: 29px;
+    height: 29px;
+    border: 2px solid #cfcfcf;
+    border-radius: 50%;
+    font-weight: bold;
+}
+
+.etapa-pedido.concluida {
+    color: #267342;
+    font-weight: bold;
+}
+
+.etapa-pedido.concluida .marcador-etapa {
+    color: white;
+    background: #267342;
+    border-color: #267342;
+}
+
+.etapa-pedido.atual .marcador-etapa {
+    outline: 3px solid #d9b58a;
+    outline-offset: 2px;
+}
+
+.aviso-cancelamento {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: #922b2b;
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+
+/* Detalhes do pedido */
+.detalhes-pedido {
+    border-top: 1px solid #eee;
+    padding-top: 12px;
+    color: #444;
+    font-size: 14px;
+}
+
+.detalhes-pedido summary {
+    cursor: pointer;
+    color: #713b25;
+    font-weight: bold;
+}
+
+.detalhes-pedido ul {
+    padding-left: 20px;
+    margin: 10px 0;
+}
+
+.detalhes-pedido h4 {
+    margin-top: 12px;
+    color: #713b25;
+}
+
+
+/* Botões */
+.acoes-pedido {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+}
+
+.acoes-pedido button {
+    background: #713b25;
+    color: white;
+}
+
+.acoes-pedido .btn-cancelar-pedido {
+    background: #f4e5e5;
+    color: #922b2b;
+}
+
+.btn-secundario {
+    width: 100%;
+    margin-top: 10px;
+    background: #eee5dc;
+    color: #713b25;
+}
+
+
+/* Aviso demonstrativo */
+.nota-demonstrativa {
+    margin-top: 15px;
+    padding: 12px;
+    border-radius: 7px;
+    background: #f8f3e9;
+    color: #666;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+
+/* Responsividade */
+@media (max-width: 600px) {
+
+    .acoes-cabecalho {
+        justify-content: center;
+    }
+
+    .acoes-cabecalho button {
+        width: 100%;
+    }
+
+    .conteudo-acompanhamento {
+        padding: 18px;
+        max-height: 92vh;
+    }
+
+    .linha-etapas {
+        gap: 4px;
+    }
+
+    .etapa-pedido {
+        font-size: 10px;
+    }
+
+    .topo-pedido {
+        flex-direction: column;
+    }
+}
+
+/* Janela centralizada */
+.modal-autenticacao {
+    width: min(92vw, 460px);
+    max-height: 90vh;
+    overflow-y: auto;
+    margin: auto;
+    padding: 0;
+    border: none;
+    border-radius: 14px;
+    background: #fff;
+    color: #3d3028;
+}
+
+.modal-autenticacao::backdrop {
+    background: rgba(0, 0, 0, 0.65);
+}
+
+.conteudo-autenticacao {
+    padding: 25px;
+}
+
+/* Cabeçalho */
+.cabecalho-autenticacao {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+/* Abas */
+.abas-autenticacao {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.aba-autenticacao {
+    padding: 12px;
+    border: none;
+    border-radius: 7px;
+    background: #eee5dc;
+    color: #713b25;
+    cursor: pointer;
+}
+
+.aba-autenticacao.ativa {
+    background: #713b25;
+    color: #fff;
+}
+
+/* Formulários */
+.form-autenticacao {
+    display: grid;
+    gap: 10px;
+}
+
+.form-autenticacao input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 11px;
+    margin-bottom: 8px;
+}
+
+/* CORREÇÃO: impede que os dois formulários apareçam */
+.form-autenticacao[hidden] {
+    display: none !important;
+}
+
+/* Mensagem */
+.mensagem-autenticacao {
+    display: block;
+    min-height: 24px;
+    margin-top: 12px;
+}
+
+.aviso-autenticacao {
+    margin-top: 12px;
+    padding: 10px;
+    border-radius: 7px;
+    background: #f8f3e9;
+    color: #65584f;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+/* Celular */
+@media (max-width: 600px) {
+    .modal-autenticacao {
+        width: 94vw;
+        max-height: 90vh;
+    }
+
+    .conteudo-autenticacao {
+        padding: 18px;
+    }
+}
+
+/* PROGRAMA DE FIDELIDADE */
+
+.area-fidelidade {
+    padding: 30px 5%;
+    background: #fff;
+    text-align: center;
+}
+
+.area-fidelidade[hidden] {
+    display: none !important;
+}
+
+.area-fidelidade h2 {
+    color: #713b25;
+    margin-bottom: 15px;
+}
+
+.painel-pontos {
+    max-width: 420px;
+    margin: 20px auto;
+    padding: 25px;
+    border-radius: 14px;
+    background: #713b25;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.painel-pontos strong {
+    font-size: 42px;
+}
+
+.painel-pontos small {
+    line-height: 1.5;
+}
+
+.lista-recompensas {
+    display: grid;
+    grid-template-columns:
+        repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.recompensa {
+    padding: 20px;
+    background: #f8f3e9;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px #00000015;
+}
+
+.recompensa h4 {
+    color: #713b25;
+    margin-bottom: 10px;
+}
+
+.recompensa p {
+    margin-bottom: 12px;
+}
+
+.recompensa button {
+    background: #713b25;
+    color: white;
+    width: 100%;
+}
+
+.recompensa button:disabled {
+    background: #999;
+    cursor: not-allowed;
+}
+
+.mensagem-fidelidade {
+    display: block;
+    margin-top: 20px;
+    font-weight: bold;
+    color: #713b25;
+}
+
+@media (max-width: 600px) {
+    .area-fidelidade {
+        padding: 25px 15px;
+    }
+
+    .lista-recompensas {
+        grid-template-columns: 1fr;
+    }
+}

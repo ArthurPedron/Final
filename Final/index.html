@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Raízes do Nordeste</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <header>
+        <h1>Raízes do Nordeste</h1>
+
+        <div class="acoes-cabecalho">
+
+            <div class="area-conta" aria-live="polite">
+                <span id="estadoConta">Visitante</span>
+
+                <button
+                    id="btnConta"
+                    type="button"
+                    onclick="abrirAutenticacao()">
+                    Entrar / Cadastrar
+                </button>
+
+                <button
+                    id="btnSair"
+                    type="button"
+                    onclick="sairDaConta()"
+                    hidden>
+                    Sair
+                </button>
+            </div>
+
+            <button
+                id="btnAcompanharPedido"
+                type="button"
+                onclick="abrirAcompanhamento()">
+                📦 Acompanhar pedido
+            </button>
+
+            <button
+                id="btnCarrinho"
+                type="button"
+                onclick="abrirCarrinho()">
+                🛒 Carrinho (<span id="quantidade">0</span>)
+            </button>
+
+        </div>
+    </header>
+
+    <main>
+
+        <section class="banner">
+            <h2>O sabor do Nordeste!</h2>
+            <p>Tradição e qualidade em cada receita.</p>
+        </section>
+        <section id="areaFidelidade" class="area-fidelidade" hidden>
+
+            <h2>Programa de Fidelidade</h2>
+
+            <p>Olá, <strong id="nomeFidelidade"></strong>!</p>
+
+            <div class="painel-pontos">
+                <span>Seus pontos acumulados</span>
+
+                <strong id="saldoPontos">0</strong>
+
+                <small>1 ponto a cada R$ 1,00 em pedidos confirmados.</small>
+            </div>
+
+            <h3>Recompensas disponíveis</h3>
+
+            <div id="listaRecompensas" class="lista-recompensas"></div>
+
+            <output
+                id="mensagemFidelidade"
+                class="mensagem-fidelidade"
+                aria-live="polite"></output>
+
+        </section>
+
+        <section class="seletor-unidade" aria-labelledby="tituloUnidade">
+            <div>
+                <h2 id="tituloUnidade">Escolha sua unidade</h2>
+                <p>O cardápio e a disponibilidade variam conforme a unidade.</p>
+            </div>
+            <label for="selectUnidade">Unidade de atendimento</label>
+            <select id="selectUnidade" onchange="alterarUnidade(this.value)">
+                <option value="recife-centro">Recife - Unidade Centro</option>
+                <option value="recife-boa-viagem">Recife - Unidade Boa Viagem</option>
+                <option value="caruaru-centro">Caruaru - Unidade Centro</option>
+            </select>
+            <p id="informacaoUnidade" class="informacao-unidade" aria-live="polite"></p>
+        </section>
+
+        <section class="categorias">
+
+            <button onclick="filtrar('Todos')">Todos</button>
+            <button onclick="filtrar('Tapiocas')">Tapiocas</button>
+            <button onclick="filtrar('Cuscuz')">Cuscuz</button>
+            <button onclick="filtrar('Bolos')">Bolos</button>
+            <button onclick="filtrar('Bebidas')">Bebidas</button>
+
+        </section>
+
+        <section id="cardapio" class="cardapio" aria-live="polite">
+        </section>
+
+        <details class="painel-estoque">
+            <summary>Simular atualização de estoque (área demonstrativa)</summary>
+            <p>Recurso acadêmico sem autenticação e sem gravação em servidor. Em produção, esta área exigiria acesso administrativo protegido.</p>
+            <div class="campos-estoque">
+                <div>
+                    <label for="produtoEstoque">Produto</label>
+                    <select id="produtoEstoque" onchange="preencherEstoqueAtual()"></select>
+                </div>
+                <div>
+                    <label for="quantidadeEstoque">Quantidade disponível</label>
+                    <input id="quantidadeEstoque" type="number" min="0" max="999" step="1" value="0">
+                </div>
+                <button type="button" onclick="salvarEstoqueDemonstrativo()">Atualizar disponibilidade</button>
+            </div>
+            <output id="mensagemEstoque" class="mensagem-estoque"></output>
+        </details>
+
+        
+    
+
+    </main>
+    <!-- Fundo escuro -->
+        <button
+            id="fundoCarrinho"
+            type="button"
+            aria-label="Fechar carrinho"
+            onclick="fecharCarrinho()">
+        </button>
+    <!-- Painel do carrinho -->
+        <aside id="areaCarrinho">
+
+            <div class="cabecalhoCarrinho">
+                <h2>Meu Carrinho 🛒</h2>
+
+                <button onclick="fecharCarrinho()" class="fechar">
+                ✕
+                </button>
+            </div>
+
+            <div id="listaCarrinho"></div>
+
+            <div class="rodapeCarrinho">
+                <h3>
+                Total:
+                    <span id="totalCarrinho">R$ 0,00</span>
+                </h3>
+
+                <button onclick="finalizarPedido()">
+                    Finalizar pedido
+                </button>
+            </div>
+
+        </aside>
+    
+
+        <!-- Tela de finalização do pedido -->
+        <dialog id="modalFinalizacao"
+            class="modal-finalizacao"
+            
+            aria-labelledby="tituloFinalizacao"
+            hidden>
+
+            <div class="conteudo-finalizacao">
+
+                <div class="cabecalho-finalizacao">
+                    <h2 id="tituloFinalizacao">Finalizar pedido</h2>
+
+                    <button type="button"
+                            class="fechar"
+                            onclick="fecharFinalizacao()"
+                            aria-label="Fechar">
+                        ✕
+                    </button>
+                </div>
+
+                <div id="formularioPedido">
+
+                    <h3>Dados para entrega</h3>
+
+                    <p class="descricao-formulario">
+                        Precisamos destas informações para identificar
+                        o pedido e realizar a entrega.
+                    </p>
+
+                    <form id="formPedido" onsubmit="confirmarPedido(event)">
+
+                        <label for="nomeCliente">Nome completo</label>
+
+                        <input
+                            type="text"
+                            id="nomeCliente"
+                            name="nome"
+                            placeholder="Digite seu nome"
+                            autocomplete="name"
+                            maxlength="100"
+                            required>
+
+                        <label for="telefoneCliente">Telefone</label>
+
+                        <input
+                            type="tel"
+                            id="telefoneCliente"
+                            name="telefone"
+                            placeholder="(00) 00000-0000"
+                            autocomplete="tel"
+                            maxlength="20"
+                            required>
+
+                        <label for="enderecoCliente">Endereço completo</label>
+
+                        <textarea
+                            id="enderecoCliente"
+                            name="endereco"
+                            placeholder="Rua, número, bairro, cidade e complemento"
+                            autocomplete="street-address"
+                            maxlength="300"
+                            rows="3"
+                            required></textarea>
+
+                        <div class="aviso-lgpd">
+
+                            <h3>🔒 Privacidade dos seus dados</h3>
+
+                            <p>
+                                Seus dados serão utilizados exclusivamente
+                                para identificação, processamento e entrega
+                                deste pedido.
+                            </p>
+
+                            <p>
+                                Solicitamos apenas as informações necessárias
+                                para realizar o atendimento.
+                            </p>
+
+                            <p>
+                                Nesta versão demonstrativa, os dados não são
+                                enviados a servidores nem armazenados
+                                permanentemente.
+                            </p>
+
+                            <p>
+                                Você pode consultar nossa
+                                <button type="button"
+                                        class="link-politica"
+                                        onclick="abrirPrivacidade()">
+                                    Política de Privacidade
+                                </button>.
+                            </p>
+
+                        </div>
+
+                        <div class="confirmacao-privacidade">
+
+                            <input
+                                type="checkbox"
+                                id="leituraPrivacidade"
+                                required>
+
+                            <label for="leituraPrivacidade">
+                                Declaro que li as informações de privacidade
+                                apresentadas acima.
+                            </label>
+
+                        </div>
+
+                        <button type="submit" class="btn-confirmar">
+                            Confirmar pedido
+                        </button>
+
+                    </form>
+
+                </div>
+
+                <!-- Resultado demonstrativo -->
+                <div id="resultadoPedido" hidden aria-live="polite">
+
+                    <h3>Pedido demonstrativo finalizado!</h3>
+
+                    <p>
+                        Os dados foram utilizados apenas nesta sessão
+                        do navegador. Nenhum pedido real foi enviado.
+                    </p>
+
+                    <div id="resumoPedido"></div>
+                    
+                    <button
+                        type="button"
+                        class="btn-confirmar"
+                        onclick="abrirAcompanhamento()">
+                        Acompanhar este pedido
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btn-secundario"
+                        onclick="fecharFinalizacao()">
+                        Fechar
+                    </button>
+
+                </div>
+
+            </div>
+        </dialog>
+
+    
+    <footer class="rodape">
+        <p>© 2026 Raízes do Nordeste</p>
+
+        <button
+            id="btnPrivacidade"
+            type="button"
+            class="btn-privacidade"
+            onclick="abrirPrivacidade()">
+            Política de Privacidade
+        </button>
+
+        <p>Seus dados e sua privacidade são importantes para nós.</p>
+    </footer>
+
+    <!-- Modal da Política de Privacidade -->
+    <dialog id="modalPrivacidade" class="modal-privacidade"
+        aria-labelledby="tituloPrivacidade"
+        hidden>
+
+        <div class="conteudo-privacidade">
+
+            <div class="cabecalho-privacidade">
+                <h2 id="tituloPrivacidade">Política de Privacidade</h2>
+
+                <button type="button"
+                        class="fechar"
+                        onclick="fecharPrivacidade()"
+                        aria-label="Fechar política de privacidade">
+                    ✕
+                </button>
+            </div>
+
+            <div class="texto-privacidade">
+
+                <h3>1. Introdução</h3>
+
+                <p>
+                    O Raízes do Nordeste respeita a privacidade dos usuários
+                    e busca proteger suas informações pessoais, seguindo
+                    os princípios da Lei Geral de Proteção de Dados
+                    Pessoais (Lei nº 13.709/2018 - LGPD).
+                </p>
+
+                <h3>2. Coleta de dados</h3>
+
+                <p>
+                    Na versão atual do sistema, não solicitamos nome,
+                    CPF, endereço, telefone ou outros dados pessoais
+                    para consultar o cardápio e adicionar produtos
+                    ao carrinho.
+                </p>
+
+                <p>
+                    Os produtos selecionados ficam armazenados
+                    temporariamente na memória da aplicação durante
+                    a utilização da página.
+                </p>
+
+                <h3>3. Finalidade do tratamento</h3>
+
+                <p>
+                    O sistema utiliza informações dos produtos
+                    selecionados exclusivamente para calcular
+                    quantidades e valores do carrinho.
+                </p>
+
+                <h3>4. Compartilhamento de dados</h3>
+
+                <p>
+                    Nesta versão, o sistema não envia os dados
+                    do carrinho para terceiros nem realiza
+                    compartilhamento de dados pessoais.
+                </p>
+
+                <h3>5. Armazenamento e segurança</h3>
+
+                <p>
+                    O carrinho não é salvo permanentemente.
+                    Ao atualizar ou fechar a página, os produtos
+                    selecionados podem ser perdidos.
+                </p>
+
+                <h3>6. Direitos dos titulares</h3>
+
+                <p>
+                    Nos termos da LGPD, os titulares possuem direitos
+                    relacionados ao tratamento de seus dados pessoais,
+                    incluindo confirmação de tratamento, acesso,
+                    correção, eliminação nos casos previstos em lei
+                    e informações sobre compartilhamento.
+                </p>
+
+                <h3>7. Contato</h3>
+
+                <p>
+                    Responsável pelo projeto: Arthur Pedron.
+                </p>
+
+                <p>
+                    Contato para questões de privacidade:
+                    arthureisaac@bol.com.br.
+                </p>
+
+                <h3>8. Atualizações</h3>
+
+                <p>
+                    Esta política poderá ser atualizada caso novas
+                    funcionalidades sejam implementadas ou ocorra
+                    alteração na forma de tratamento de dados.
+                </p>
+
+                <h3>9. Dados fornecidos na finalização do pedido</h3>
+
+                <p>
+                    Durante a finalização demonstrativa do pedido, são solicitados
+                    nome, telefone e endereço de entrega. Esses dados são exibidos
+                    temporariamente no resumo e apagados da interface ao fechar a tela.
+                </p>
+
+                <h3>10. Finalidade da utilização</h3>
+
+                <p>
+                    Essas informações são utilizadas para identificar o cliente,
+                    possibilitar o contato relacionado ao pedido e viabilizar
+                    a entrega dos produtos.
+                </p>
+
+                <h3>11. Base legal</h3>
+
+                <p>
+                    O tratamento poderá ocorrer com fundamento nas hipóteses
+                    legais previstas na LGPD, especialmente nos procedimentos
+                    preliminares relacionados a contrato e na execução de
+                    contrato, quando aplicáveis.
+                </p>
+
+                <h3>12. Retenção dos dados</h3>
+
+                <p>
+                    Nome, telefone e endereço são exibidos temporariamente na tela
+                    de confirmação. Ao fechar essa tela ou abrir o acompanhamento,
+                    o resumo e os campos do formulário são limpos. Esses dados não
+                    são incluídos no histórico de acompanhamento.
+                </p>
+
+                <p>
+                    O acompanhamento mantém somente dados demonstrativos do pedido,
+                    como número, unidade, itens, quantidades, total e status, na
+                    memória da página enquanto ela estiver aberta. O histórico é
+                    perdido ao atualizar ou fechar a página. Nenhuma dessas
+                    informações é enviada a um servidor ou gravada em banco de dados.
+                </p>
+
+
+                <p><strong>Última atualização: 18/11/2026.</strong></p>
+
+            </div>
+
+            <button type="button"
+                    class="btn-entendi"
+                    onclick="fecharPrivacidade()">
+                Entendi
+            </button>
+
+        </div>
+</dialog>
+
+<!-- Acompanhamento demonstrativo de pedidos -->
+<dialog
+    id="modalAcompanhamento"
+    class="modal-acompanhamento"
+    aria-labelledby="tituloAcompanhamento"
+    hidden>
+
+    <div class="conteudo-acompanhamento">
+
+        <div class="cabecalho-acompanhamento">
+
+            <div>
+                <h2 id="tituloAcompanhamento">
+                    Acompanhamento de pedidos
+                </h2>
+
+                <p>
+                    Consulte e simule as etapas do pedido nesta sessão.
+                </p>
+            </div>
+
+            <button
+                type="button"
+                class="fechar"
+                onclick="fecharAcompanhamento()"
+                aria-label="Fechar acompanhamento">
+                ✕
+            </button>
+
+        </div>
+
+        <div id="listaPedidos" aria-live="polite">
+            <p class="sem-pedidos">
+                Nenhum pedido foi registrado nesta sessão.
+            </p>
+        </div>
+
+        <p class="nota-demonstrativa">
+            Demonstração acadêmica: os status são simulados no navegador.
+            Não há integração com cozinha, entregadores ou servidor.
+            Ao atualizar ou fechar a página, o histórico será perdido.
+        </p>
+
+    </div>
+</dialog>
+<!-- Cadastro e autenticação demonstrativos -->
+<dialog
+    id="modalAutenticacao"
+    class="modal-autenticacao"
+    aria-labelledby="tituloAutenticacao">
+
+    <div class="conteudo-autenticacao">
+
+        <div class="cabecalho-autenticacao">
+            <h2 id="tituloAutenticacao">Acesso do cliente</h2>
+
+            <button
+                type="button"
+                class="fechar"
+                onclick="fecharAutenticacao()"
+                aria-label="Fechar">
+                ✕
+            </button>
+        </div>
+
+        <div class="abas-autenticacao">
+
+            <button
+                type="button"
+                id="abaLogin"
+                class="aba-autenticacao ativa"
+                onclick="mostrarFormularioAutenticacao('login')">
+                Entrar
+            </button>
+
+            <button
+                type="button"
+                id="abaCadastro"
+                class="aba-autenticacao"
+                onclick="mostrarFormularioAutenticacao('cadastro')">
+                Cadastrar
+            </button>
+
+        </div>
+
+        <!-- Formulário de login -->
+        <form id="formLogin" class="form-autenticacao">
+
+            <label for="emailLogin">E-mail</label>
+
+            <input
+                id="emailLogin"
+                type="email"
+                autocomplete="username"
+                maxlength="150"
+                required>
+
+            <label for="senhaLogin">Senha</label>
+
+            <input
+                id="senhaLogin"
+                type="password"
+                autocomplete="current-password"
+                minlength="8"
+                required>
+
+            <button type="submit" class="btn-confirmar">
+                Entrar
+            </button>
+
+        </form>
+
+        <!-- Formulário de cadastro -->
+        <form id="formCadastro" class="form-autenticacao" hidden>
+
+            <label for="nomeCadastro">Nome completo</label>
+
+            <input
+                id="nomeCadastro"
+                type="text"
+                autocomplete="name"
+                maxlength="100"
+                required>
+
+            <label for="emailCadastro">E-mail</label>
+
+            <input
+                id="emailCadastro"
+                type="email"
+                autocomplete="email"
+                maxlength="150"
+                required>
+
+            <label for="senhaCadastro">
+                Senha (mínimo de 8 caracteres)
+            </label>
+
+            <input
+                id="senhaCadastro"
+                type="password"
+                autocomplete="new-password"
+                minlength="8"
+                required>
+
+            <label for="confirmarSenhaCadastro">
+                Confirmar senha
+            </label>
+
+            <input
+                id="confirmarSenhaCadastro"
+                type="password"
+                autocomplete="new-password"
+                minlength="8"
+                required>
+
+            <button type="submit" class="btn-confirmar">
+                Criar cadastro
+            </button>
+
+        </form>
+
+        <output
+            id="mensagemAutenticacao"
+            class="mensagem-autenticacao"
+            aria-live="polite">
+        </output>
+
+        <p class="aviso-autenticacao">
+            Demonstração acadêmica: os cadastros existem somente
+            na memória desta página. Não use senhas reais.
+            Ao atualizar ou fechar a página, os dados são perdidos.
+            Não há autenticação segura nem servidor.
+        </p>
+
+    </div>
+</dialog>
+
+    <script src="js/produtos.js"></script>
+    <script src="js/carrinho.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/autenticacao.js"></script>
+</body>
+</html>
