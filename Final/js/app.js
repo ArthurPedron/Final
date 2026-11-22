@@ -9,14 +9,14 @@ function carregarProdutos(categoria = categoriaAtual) {
         categoria === "Todos" || produto.categoria === categoria
     );
 
-    lista.forEach(produto => {
+    const cartoes = lista.map(produto => {
         const estoque = obterEstoque(produto);
         const disponivel = estoque > 0;
         const imagem = produto.imagem
-            ? `<img src="${produto.imagem}" alt="${produto.nome}" loading="lazy">`
+            ? `<img src="${produto.imagem}" alt="${produto.nome}" width="640" height="480" loading="lazy" decoding="async">`
             : `<div class="imagem-placeholder" aria-label="Imagem ilustrativa não cadastrada">🥘</div>`;
 
-        cardapio.innerHTML += `
+        return `
             <article class="produto ${disponivel ? "" : "produto-indisponivel"}">
                 ${imagem}
                 <h3>${produto.nome}</h3>
@@ -30,6 +30,8 @@ function carregarProdutos(categoria = categoriaAtual) {
             </article>
         `;
     });
+
+    cardapio.innerHTML = cartoes.join("");
 
     if (lista.length === 0) {
         cardapio.innerHTML = '<p class="sem-produtos">Nenhum produto encontrado nesta categoria.</p>';
