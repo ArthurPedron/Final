@@ -60,6 +60,22 @@
             <h2>O sabor do Nordeste!</h2>
             <p>Tradição e qualidade em cada receita.</p>
         </section>
+        <section class="secao-campanhas" aria-labelledby="tituloCampanhas">
+            <div class="cabecalho-campanhas">
+                <h2 id="tituloCampanhas">Promoções e campanhas</h2>
+                <p>Ofertas demonstrativas para aproveitar os sabores do Nordeste.</p>
+            </div>
+            <article class="cartao-campanha">
+                <div>
+                    <span class="selo-campanha">CUPOM DE BOAS-VINDAS</span>
+                    <h3>10% de desconto no pedido</h3>
+                    <p>Em compras a partir de R$ 30,00, limitado a R$ 15,00 de desconto.</p>
+                    <small>Campanha demonstrativa. Consulte as condições no checkout.</small>
+                </div>
+                <button type="button" onclick="selecionarCupom('NORDESTE10')">Usar cupom NORDESTE10</button>
+            </article>
+        </section>
+
         <section id="areaFidelidade" class="area-fidelidade" hidden>
 
             <h2>Programa de Fidelidade</h2>
@@ -243,6 +259,17 @@
                             </div>
                         </section>
 
+                        <section class="area-cupom" aria-labelledby="tituloCupom">
+                            <h3 id="tituloCupom">Promoções</h3>
+                            <label for="codigoCupom">Código promocional</label>
+                            <div class="linha-cupom">
+                                <input id="codigoCupom" type="text" maxlength="30" autocomplete="off" placeholder="Digite seu cupom">
+                                <button type="button" onclick="aplicarCupomPromocional()">Aplicar</button>
+                            </div>
+                            <output id="mensagemCupom" aria-live="polite"></output>
+                            <p id="resumoDescontoCupom" hidden></p>
+                        </section>
+
                         <div class="aviso-lgpd">
 
                             <h3>🔒 Privacidade dos seus dados</h3>
@@ -289,9 +316,24 @@
 
                         </div>
 
-                        <button type="submit" class="btn-confirmar">
-                            Confirmar pedido
-                        </button>
+                        <section class="area-pagamento" aria-labelledby="tituloPagamento">
+                            <h3 id="tituloPagamento">Pagamento demonstrativo</h3>
+                            <p>Selecione uma forma de pagamento. O sistema simulará o envio da solicitação a um serviço externo, sem realizar cobrança.</p>
+                            <label for="formaPagamento">Forma de pagamento</label>
+                            <select id="formaPagamento" required>
+                                <option value="Pix">Pix</option>
+                                <option value="Cartão">Cartão</option>
+                            </select>
+                            <label for="retornoPagamentoSimulado">Retorno do serviço (simulação acadêmica)</label>
+                            <select id="retornoPagamentoSimulado">
+                                <option value="aprovado">Pagamento aprovado</option>
+                                <option value="recusado">Pagamento recusado</option>
+                                <option value="pendente">Aguardando confirmação</option>
+                            </select>
+                            <p class="nota-pagamento">Este seletor permite demonstrar os diferentes retornos do gateway. Nenhum dado financeiro é solicitado ou transmitido.</p>
+                            <output id="statusPagamento" class="status-pagamento" aria-live="polite"></output>
+                        </section>
+                        <button type="submit" class="btn-confirmar" id="btnSolicitarPagamento">Enviar solicitação de pagamento</button>
 
                     </form>
 
@@ -375,10 +417,10 @@
                 <h3>2. Coleta de dados</h3>
 
                 <p>
-                    Na versão atual do sistema, não solicitamos nome,
-                    CPF, endereço, telefone ou outros dados pessoais
-                    para consultar o cardápio e adicionar produtos
-                    ao carrinho.
+                    Para cadastro demonstrativo, o sistema solicita nome,
+                    e-mail e senha. Na finalização do pedido, solicita nome,
+                    telefone e endereço de entrega. A consulta ao cardápio
+                    e o uso do carrinho não exigem esses dados.
                 </p>
 
                 <p>
@@ -390,25 +432,29 @@
                 <h3>3. Finalidade do tratamento</h3>
 
                 <p>
-                    O sistema utiliza informações dos produtos
-                    selecionados exclusivamente para calcular
-                    quantidades e valores do carrinho.
+                    Os dados de cadastro são usados para simular a identificação
+                    e a associação do usuário ao programa de fidelidade. Nome,
+                    telefone e endereço informados no checkout são usados apenas
+                    para compor o resumo demonstrativo do pedido.
                 </p>
 
                 <h3>4. Compartilhamento de dados</h3>
 
                 <p>
-                    Nesta versão, o sistema não envia os dados
-                    do carrinho para terceiros nem realiza
-                    compartilhamento de dados pessoais.
+                    Esta versão estática não envia dados pessoais, dados do
+                    pedido ou informações de pagamento a terceiros. A etapa
+                    de pagamento apenas representa visualmente uma solicitação
+                    e um retorno fictícios de um serviço externo.
                 </p>
 
                 <h3>5. Armazenamento e segurança</h3>
 
                 <p>
-                    O carrinho não é salvo permanentemente.
-                    Ao atualizar ou fechar a página, os produtos
-                    selecionados podem ser perdidos.
+                    Os dados de cadastro, autenticação, pontos, recompensas,
+                    carrinho e pedidos são mantidos somente na memória da página.
+                    Ao atualizar ou fechar o navegador, essas informações são
+                    perdidas. As senhas são apenas demonstrativas: não use
+                    credenciais reais neste protótipo.
                 </p>
 
                 <h3>6. Direitos dos titulares</h3>
@@ -465,7 +511,9 @@
                     contrato, quando aplicáveis.
                 </p>
 
-                <h3>12. Retenção dos dados</h3>
+                <h3>12. Pagamento demonstrativo</h3>
+                <p>O checkout permite selecionar Pix ou cartão e visualizar retornos fictícios de aprovação, recusa ou pendência. Não são coletados números de cartão, códigos de segurança, chaves Pix ou dados bancários. Nenhuma cobrança é realizada e não existe conexão com instituição financeira ou gateway.</p>
+                <h3>13. Retenção dos dados</h3>
 
                 <p>
                     Nome, telefone e endereço são exibidos temporariamente na tela
@@ -483,7 +531,9 @@
                 </p>
 
 
-                <p><strong>Última atualização: 18/11/2026.</strong></p>
+                <h3>14. Limitações desta versão acadêmica</h3>
+                <p>O projeto é um protótipo front-end hospedado como site estático. Não possui servidor, banco de dados, autenticação segura, persistência ou integração real com meios de pagamento. Para uso em produção, será necessário implementar controles técnicos, segurança, gestão de consentimentos quando aplicável, atendimento aos direitos dos titulares e contratos com operadores de dados.</p>
+                <p><strong>Última atualização: 22/11/2026.</strong></p>
 
             </div>
 
