@@ -972,3 +972,51 @@ header h1 { text-align: center; }
     .linha-cupom { flex-direction: row; }
     .linha-cupom button { min-width: 120px; }
 }
+
+
+/* Ajustes finais: mobile-first, acessibilidade e renderização */
+html { scroll-behavior: smooth; }
+body { min-width: 320px; line-height: 1.5; }
+button, input, select, textarea { font: inherit; }
+button { min-height: 44px; }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, summary:focus-visible { outline: 3px solid #d99b46; outline-offset: 3px; }
+img { max-width: 100%; }
+.cardapio { grid-template-columns: minmax(0, 1fr); }
+.produto { min-width: 0; content-visibility: auto; contain-intrinsic-size: auto 280px; }
+.produto img { display: block; width: 100%; height: 160px; object-fit: cover; }
+.acoes-cabecalho, .area-conta { min-width: 0; }
+.area-conta { display: flex; flex-direction: column; gap: 8px; align-items: stretch; }
+.categorias button { min-height: 44px; }
+.linha-etapas { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.etapa-pedido { overflow-wrap: anywhere; }
+.campos-estoque { grid-template-columns: minmax(0, 1fr); }
+.cartao-campanha > button { width: 100%; }
+.linha-cupom input { min-width: 0; }
+.conteudo-finalizacao, .conteudo-privacidade, .conteudo-acompanhamento { width: 100%; max-width: 100%; max-height: 92dvh; overflow-y: auto; overscroll-behavior: contain; }
+.cartao-pedido { content-visibility: auto; contain-intrinsic-size: auto 280px; }
+@media (min-width: 640px) {
+ header { flex-direction: row; align-items: center; padding: 18px 4%; }
+ header h1 { text-align: left; }
+ .acoes-cabecalho { flex-direction: row; align-items: center; width: auto; }
+ .acoes-cabecalho button { width: auto; }
+ .area-conta { flex-direction: row; align-items: center; }
+ .cardapio { grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 24px 4%; gap: 18px; }
+ .categorias { padding: 20px; }
+ .categorias button { flex: 0 1 auto; }
+ .campos-estoque { grid-template-columns: 2fr 1fr; }
+ .campos-estoque button { grid-column: 1 / -1; }
+ .cartao-campanha { flex-direction: row; align-items: center; justify-content: space-between; }
+ .cartao-campanha > button { width: auto; }
+ .linha-cupom { flex-direction: row; }
+ .linha-cupom input { flex: 1; }
+ .conteudo-finalizacao { max-width: 550px; padding: 25px; }
+ .conteudo-privacidade { max-width: 650px; padding: 25px; }
+ .conteudo-acompanhamento { max-width: 760px; padding: 25px; }
+}
+@media (min-width: 960px) {
+ header { padding-inline: max(4%, calc((100% - 1200px) / 2)); }
+ .cardapio { grid-template-columns: repeat(3, minmax(0, 1fr)); max-width: 1240px; margin-inline: auto; }
+ .campos-estoque { grid-template-columns: 2fr 1fr auto; }
+ .campos-estoque button { grid-column: auto; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; } }
