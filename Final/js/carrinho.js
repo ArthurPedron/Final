@@ -392,6 +392,8 @@ function confirmarPedido(event) {
     const pedido = {
 
         id: numeroPedido,
+        usuarioId: typeof usuarioAtual !== "undefined" && usuarioAtual ? usuarioAtual.id : null,
+        usuarioNome: typeof usuarioAtual !== "undefined" && usuarioAtual ? usuarioAtual.nome : "Visitante",
 
         unidade: unidadeDoPedido?.nome || "Unidade não identificada",
 
@@ -583,19 +585,23 @@ function renderizarAcompanhamento() {
 
     if (!lista) return;
 
-    if (pedidosDemonstrativos.length === 0) {
+    const pedidosVisiveis = pedidosDemonstrativos.filter(pedido => {
+        const idUsuarioAtual = typeof usuarioAtual !== "undefined" && usuarioAtual
+            ? usuarioAtual.id
+            : null;
+        return (pedido.usuarioId ?? null) === idUsuarioAtual;
+    });
 
-        lista.innerHTML = `
-            <p class="sem-pedidos">
-                Nenhum pedido foi registrado nesta sessão.
-                Faça um pedido demonstrativo para acompanhar seu andamento.
-            </p>
-        `;
+    if (pedidosVisiveis.length === 0) {
+        const orientacao = typeof usuarioAtual !== "undefined" && usuarioAtual
+            ? "Sua conta ainda não possui pedidos nesta sessão."
+            : "Nenhum pedido de visitante foi registrado nesta sessão. Entre na sua conta para consultar os pedidos vinculados a ela.";
 
+        lista.innerHTML = `<p class="sem-pedidos">${orientacao}</p>`;
         return;
     }
 
-    lista.innerHTML = pedidosDemonstrativos.map(pedido => {
+    lista.innerHTML = pedidosVisiveis.map(pedido => {
 
         const cancelado = pedido.status === "Cancelado";
 
