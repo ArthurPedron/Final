@@ -908,3 +908,14 @@ button {
         grid-template-columns: 1fr;
     }
 }
+
+
+/* Recompensas disponíveis durante a finalização */
+.recompensas-checkout { margin: 20px 0; padding: 18px; border-radius: 12px; background: #f8f3e9; }
+.recompensas-checkout h3 { color: #713b25; margin-bottom: 10px; }
+.recompensa-checkout { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; padding: 14px; border: 1px solid #e5d8c8; border-radius: 9px; background: #fff; }
+.recompensa-checkout strong { color: #713b25; }
+.recompensa-checkout button { background: #713b25; color: #fff; }
+.recompensa-checkout button:disabled { background: #999; cursor: not-allowed; }
+#resumoDescontoFidelidade { margin-top: 14px; padding: 12px; border: 1px solid #713b25; border-radius: 8px; }
+#resumoDescontoFidelidade[hidden] { display: none !important; }
