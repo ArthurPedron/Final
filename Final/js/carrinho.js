@@ -200,6 +200,10 @@ function finalizarPedido() {
 
     fecharCarrinho();
 
+    if (typeof atualizarRecompensasCheckout === "function") {
+        atualizarRecompensasCheckout();
+    }
+
     document.getElementById("nomeCliente").focus();
 }
 
@@ -280,22 +284,22 @@ function confirmarPedido(event) {
 
     sequenciaPedidos++;
 
+    const totalOriginal = calcularTotal();
+    const descontoFidelidade = typeof calcularDescontoFidelidade === "function"
+        ? calcularDescontoFidelidade(totalOriginal) : 0;
+    const totalPedido = Math.max(0, totalOriginal - descontoFidelidade);
+
     const itensPedido = carrinho.map(item => ({
         id: item.id,
         nome: item.nome,
         preco: item.preco,
-        quantidade: item.quantidade
+        quantidade: item.quantidade,
+        desconto: typeof recompensaSelecionada !== "undefined" &&
+            recompensaSelecionada?.tipo === "suco" &&
+            item.nome.toLowerCase().includes("suco") ? item.preco : 0
     }));
 
-    const totalPedido = calcularTotal();
-    // Pontuação demonstrativa do cliente autenticado
     let pontosGanhos = 0;
-
-    if (typeof adicionarPontosFidelidade === "function") {
-
-        pontosGanhos = adicionarPontosFidelidade(totalPedido);
-
-    }
 
     // Registro do pedido sem dados pessoais
     const pedido = {
@@ -308,6 +312,8 @@ function confirmarPedido(event) {
 
         itens: itensPedido,
 
+        totalOriginal,
+        descontoFidelidade,
         total: totalPedido,
 
         status: "Recebido",
@@ -324,6 +330,16 @@ function confirmarPedido(event) {
     };
 
     pedidosDemonstrativos.unshift(pedido);
+
+    // O resgate só é debitado depois que o pedido foi registrado.
+    if (typeof finalizarUsoRecompensa === "function") {
+        finalizarUsoRecompensa();
+    }
+
+    // A pontuação é calculada sobre o total efetivamente pago.
+    if (typeof adicionarPontosFidelidade === "function") {
+        pontosGanhos = adicionarPontosFidelidade(totalPedido);
+    }
 
     // Baixa demonstrativa do estoque
     carrinho.forEach(item => {
@@ -382,6 +398,9 @@ function confirmarPedido(event) {
 
     // Esvazia o carrinho
     carrinho = [];
+    if (typeof atualizarRecompensasCheckout === "function") {
+        atualizarRecompensasCheckout();
+    }
 
     atualizarCarrinho();
 
