@@ -23,22 +23,12 @@ const mensagemAutenticacao =
 
 // RECOMPENSAS
 const recompensas = [
-    {
-        id: 1,
-        nome: "R$ 5,00 de desconto",
-        pontos: 50
-    },
-    {
-        id: 2,
-        nome: "Suco grátis",
-        pontos: 100
-    },
-    {
-        id: 3,
-        nome: "R$ 20,00 de desconto",
-        pontos: 200
-    }
+    { id: 1, nome: "R$ 5,00 de desconto", pontos: 50, tipo: "desconto", valor: 5 },
+    { id: 2, nome: "Suco grátis", pontos: 100, tipo: "suco" },
+    { id: 3, nome: "R$ 20,00 de desconto", pontos: 200, tipo: "desconto", valor: 20 }
 ];
+
+let recompensaSelecionada = null;
 
 
 // ABRIR AUTENTICAÇÃO
@@ -304,47 +294,121 @@ function mostrarRecompensas() {
 }
 
 
-// RESGATAR RECOMPENSA
+// Seleciona a recompensa sem debitar pontos antes da confirmação.
 function resgatarRecompensa(id) {
+    selecionarRecompensaPedido(id);
+}
 
+function selecionarRecompensaPedido(id) {
     if (!usuarioAtual) return;
-
-    const recompensa = recompensas.find(
-        item => item.id === id
-    );
-
+    const recompensa = recompensas.find(item => item.id === id);
     if (!recompensa) return;
 
-    const mensagem =
-        document.getElementById("mensagemFidelidade");
-
     if (usuarioAtual.pontos < recompensa.pontos) {
-
-        mensagem.textContent =
-            "Você não possui pontos suficientes.";
-
+        document.getElementById("mensagemFidelidade").textContent = "Você não possui pontos suficientes.";
         return;
     }
 
-    const confirmou = confirm(
-        `Deseja resgatar ${recompensa.nome} por ${recompensa.pontos} pontos?`
-    );
+    if (usuarioAtual.recompensasResgatadas.some(item => item.id === id)) {
+        document.getElementById("mensagemFidelidade").textContent = "Esta recompensa já foi utilizada nesta sessão.";
+        return;
+    }
 
-    if (!confirmou) return;
+    if (recompensa.tipo === "suco" && !existeSucoNoCarrinho()) {
+        alert("Adicione um Suco de Cajá ao carrinho antes de selecionar esta recompensa.");
+        return;
+    }
 
-    usuarioAtual.pontos -= recompensa.pontos;
-
-    usuarioAtual.recompensasResgatadas.push({
-        nome: recompensa.nome,
-        data: new Date().toLocaleDateString("pt-BR")
-    });
-
-    mensagem.textContent =
-        `Recompensa "${recompensa.nome}" resgatada com sucesso!`;
-
+    recompensaSelecionada = recompensa;
+    atualizarRecompensasCheckout();
     atualizarFidelidade();
 }
 
+function existeSucoNoCarrinho() {
+    return typeof carrinho !== "undefined" && carrinho.some(
+        item => item.nome.toLowerCase().includes("suco") && item.quantidade > 0
+    );
+}
+
+function calcularDescontoFidelidade(total) {
+    if (!usuarioAtual || !recompensaSelecionada) return 0;
+    if (recompensaSelecionada.tipo === "desconto") {
+        return Math.min(recompensaSelecionada.valor, total);
+    }
+    if (recompensaSelecionada.tipo === "suco") {
+        const suco = carrinho.find(item =>
+            item.nome.toLowerCase().includes("suco") && item.quantidade > 0
+        );
+        return suco ? Math.min(suco.preco, total) : 0;
+    }
+    return 0;
+}
+
+function atualizarRecompensasCheckout() {
+    const area = document.getElementById("opcoesRecompensasCheckout");
+    const saldo = document.getElementById("pontosCheckout");
+    const resumo = document.getElementById("resumoDescontoFidelidade");
+    const descricao = document.getElementById("descricaoRecompensaAplicada");
+    if (!area || !saldo || !resumo || !descricao) return;
+
+    saldo.textContent = usuarioAtual ? usuarioAtual.pontos : 0;
+    area.replaceChildren();
+
+    if (!usuarioAtual) {
+        area.textContent = "Entre na sua conta para utilizar suas recompensas.";
+        resumo.hidden = true;
+        return;
+    }
+
+    recompensas.forEach(recompensa => {
+        const usada = usuarioAtual.recompensasResgatadas.some(item => item.id === recompensa.id);
+        const selecionada = recompensaSelecionada?.id === recompensa.id;
+        const card = document.createElement("article");
+        card.className = "recompensa-checkout";
+        const titulo = document.createElement("strong");
+        titulo.textContent = recompensa.nome;
+        const custo = document.createElement("p");
+        custo.textContent = `${recompensa.pontos} pontos`;
+        const botao = document.createElement("button");
+        botao.type = "button";
+        botao.textContent = selecionada ? "Selecionada" : usada ? "Já utilizada" :
+            usuarioAtual.pontos < recompensa.pontos ? "Pontos insuficientes" : "Usar recompensa";
+        botao.disabled = selecionada || usada || usuarioAtual.pontos < recompensa.pontos;
+        if (!botao.disabled) botao.addEventListener("click", () => selecionarRecompensaPedido(recompensa.id));
+        card.append(titulo, custo, botao);
+        area.appendChild(card);
+    });
+
+    if (recompensaSelecionada) {
+        const desconto = calcularDescontoFidelidade(calcularTotal());
+        descricao.textContent = `${recompensaSelecionada.nome} — desconto de R$ ${desconto.toFixed(2).replace(".", ",")}`;
+        resumo.hidden = false;
+    } else {
+        resumo.hidden = true;
+    }
+}
+
+function removerRecompensaPedido() {
+    recompensaSelecionada = null;
+    atualizarRecompensasCheckout();
+}
+
+function finalizarUsoRecompensa() {
+    if (!usuarioAtual || !recompensaSelecionada) return;
+    const recompensa = recompensaSelecionada;
+    if (usuarioAtual.pontos < recompensa.pontos) {
+        throw new Error("Saldo de pontos insuficiente para concluir o resgate.");
+    }
+    usuarioAtual.pontos -= recompensa.pontos;
+    usuarioAtual.recompensasResgatadas.push({
+        id: recompensa.id,
+        nome: recompensa.nome,
+        data: new Date().toLocaleDateString("pt-BR")
+    });
+    recompensaSelecionada = null;
+    atualizarFidelidade();
+    atualizarRecompensasCheckout();
+}
 
 // FECHAR AO CLICAR FORA
 modalAutenticacao.addEventListener("click", function(event) {
