@@ -945,23 +945,22 @@ button {
 .pagamento-recusado { background: #f8e3e3; color: #922b2b; }
 .pagamento-pendente { background: #fff1d6; color: #80520d; }
 
-/* Abordagem mobile-first: estilos base priorizam telas pequenas. */
-@media (max-width: 767px) {
-    header { flex-direction: column; align-items: stretch; gap: 14px; padding: 16px; }
-    header h1 { text-align: center; }
-    .acoes-cabecalho { flex-direction: column; align-items: stretch; width: 100%; }
-    .acoes-cabecalho button { width: 100%; }
-    .cardapio { grid-template-columns: 1fr; padding: 18px 15px; gap: 14px; }
-    .categorias { padding: 16px 12px; gap: 8px; }
-    .categorias button { flex: 1 1 42%; }
-    .banner { padding: 38px 18px; }
-    .seletor-unidade { width: calc(100% - 30px); padding: 18px; }
-    .campos-estoque { grid-template-columns: 1fr; }
-    .cartao-campanha { padding: 16px; }
-    .linha-cupom { flex-direction: column; }
-    .linha-cupom button, .cartao-campanha button { width: 100%; min-height: 44px; }
-    .conteudo-finalizacao, .conteudo-privacidade, .conteudo-acompanhamento { padding: 16px; }
-}
+/* Abordagem mobile-first: configuração padrão para celulares. */
+header { flex-direction: column; align-items: stretch; gap: 14px; padding: 16px; }
+header h1 { text-align: center; }
+.acoes-cabecalho { flex-direction: column; align-items: stretch; width: 100%; }
+.acoes-cabecalho button { width: 100%; }
+.cardapio { grid-template-columns: 1fr; padding: 18px 15px; gap: 14px; }
+.categorias { padding: 16px 12px; gap: 8px; }
+.categorias button { flex: 1 1 42%; }
+.banner { padding: 38px 18px; }
+.seletor-unidade { width: calc(100% - 30px); padding: 18px; }
+.campos-estoque { grid-template-columns: 1fr; }
+.cartao-campanha { padding: 16px; }
+.linha-cupom { flex-direction: column; }
+.linha-cupom button, .cartao-campanha button { width: 100%; min-height: 44px; }
+.conteudo-finalizacao, .conteudo-privacidade, .conteudo-acompanhamento { padding: 16px; }
+
 @media (min-width: 768px) {
     header { flex-direction: row; align-items: center; }
     .acoes-cabecalho { flex-direction: row; width: auto; }
