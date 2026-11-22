@@ -71,12 +71,7 @@ button {
     margin-top: 12px;
 }
 
-@media (max-width: 600px) {
-    header {
-        flex-direction: column;
-        gap: 15px;
-    }
-}
+
 /* Fundo escuro */
 #fundoCarrinho {
     position: fixed;
@@ -248,12 +243,7 @@ button {
     opacity: 0.85;
 }
 
-@media (max-width: 600px) {
-    .conteudo-privacidade {
-        padding: 18px;
-        max-height: 90vh;
-    }
-}
+
 
 /* Modal de finalização */
 .modal-finalizacao {
@@ -386,12 +376,7 @@ button {
     overflow-wrap: anywhere;
 }
 
-@media (max-width: 600px) {
-    .conteudo-finalizacao {
-        padding: 18px;
-        max-height: 92vh;
-    }
-}
+
 
 
 /* Seleção de unidade */
@@ -458,10 +443,7 @@ button {
 .campos-estoque button { background: #713b25; color: white; min-height: 43px; }
 .mensagem-estoque { color: #267342; font-weight: bold; }
 
-@media (max-width: 700px) {
-    .campos-estoque { grid-template-columns: 1fr; }
-    .seletor-unidade { width: 90%; padding: 18px; }
-}
+
 /* Ações do cabeçalho */
 .acoes-cabecalho {
     display: flex;
@@ -693,33 +675,7 @@ button {
 
 
 /* Responsividade */
-@media (max-width: 600px) {
 
-    .acoes-cabecalho {
-        justify-content: center;
-    }
-
-    .acoes-cabecalho button {
-        width: 100%;
-    }
-
-    .conteudo-acompanhamento {
-        padding: 18px;
-        max-height: 92vh;
-    }
-
-    .linha-etapas {
-        gap: 4px;
-    }
-
-    .etapa-pedido {
-        font-size: 10px;
-    }
-
-    .topo-pedido {
-        flex-direction: column;
-    }
-}
 
 /* Janela centralizada */
 .modal-autenticacao {
@@ -809,16 +765,7 @@ button {
 }
 
 /* Celular */
-@media (max-width: 600px) {
-    .modal-autenticacao {
-        width: 94vw;
-        max-height: 90vh;
-    }
 
-    .conteudo-autenticacao {
-        padding: 18px;
-    }
-}
 
 /* PROGRAMA DE FIDELIDADE */
 
@@ -899,15 +846,7 @@ button {
     color: #713b25;
 }
 
-@media (max-width: 600px) {
-    .area-fidelidade {
-        padding: 25px 15px;
-    }
 
-    .lista-recompensas {
-        grid-template-columns: 1fr;
-    }
-}
 
 
 /* Recompensas disponíveis durante a finalização */
@@ -945,7 +884,7 @@ button {
 .pagamento-recusado { background: #f8e3e3; color: #922b2b; }
 .pagamento-pendente { background: #fff1d6; color: #80520d; }
 
-/* Abordagem mobile-first: configuração padrão para celulares. */
+/* Mobile-first: estilos base para celulares; telas maiores são ampliadas nos breakpoints. */
 header { flex-direction: column; align-items: stretch; gap: 14px; padding: 16px; }
 header h1 { text-align: center; }
 .acoes-cabecalho { flex-direction: column; align-items: stretch; width: 100%; }
@@ -959,7 +898,15 @@ header h1 { text-align: center; }
 .cartao-campanha { padding: 16px; }
 .linha-cupom { flex-direction: column; }
 .linha-cupom button, .cartao-campanha button { width: 100%; min-height: 44px; }
-.conteudo-finalizacao, .conteudo-privacidade, .conteudo-acompanhamento { padding: 16px; }
+.conteudo-finalizacao, .conteudo-privacidade, .conteudo-acompanhamento, .conteudo-autenticacao { padding: 16px; }
+.conteudo-privacidade, .conteudo-finalizacao, .conteudo-acompanhamento { max-height: 92vh; }
+.modal-autenticacao { width: 94vw; max-height: 90vh; }
+.area-fidelidade { padding: 25px 15px; }
+.lista-recompensas { grid-template-columns: 1fr; }
+.topo-pedido { flex-direction: column; }
+.etapa-pedido { font-size: 10px; }
+.acoes-cabecalho { justify-content: center; }
+.linha-etapas { gap: 4px; }
 
 @media (min-width: 768px) {
     header { flex-direction: row; align-items: center; }
@@ -995,6 +942,13 @@ img { max-width: 100%; }
 .conteudo-finalizacao, .conteudo-privacidade, .conteudo-acompanhamento { width: 100%; max-width: 100%; max-height: 92dvh; overflow-y: auto; overscroll-behavior: contain; }
 .cartao-pedido { content-visibility: auto; contain-intrinsic-size: auto 280px; }
 @media (min-width: 640px) {
+ .conteudo-autenticacao { padding: 25px; }
+ .modal-autenticacao { width: min(92vw, 460px); }
+ .area-fidelidade { padding: 30px 5%; }
+ .lista-recompensas { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+ .topo-pedido { flex-direction: row; }
+ .etapa-pedido { font-size: 12px; }
+ .linha-etapas { gap: 8px; }
  header { flex-direction: row; align-items: center; padding: 18px 4%; }
  header h1 { text-align: left; }
  .acoes-cabecalho { flex-direction: row; align-items: center; width: auto; }
