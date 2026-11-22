@@ -119,6 +119,7 @@ formCadastro.addEventListener("submit", function(event) {
     }
 
     usuariosDemonstrativos.push({
+        id: usuariosDemonstrativos.length + 1,
         nome,
         email,
         senha,
@@ -164,9 +165,15 @@ formLogin.addEventListener("submit", function(event) {
     }
 
     usuarioAtual = usuario;
+    recompensaSelecionada = null;
 
     atualizarEstadoConta();
     atualizarFidelidade();
+    atualizarRecompensasCheckout();
+    if (typeof renderizarAcompanhamento === "function" &&
+        !document.getElementById("modalAcompanhamento")?.hidden) {
+        renderizarAcompanhamento();
+    }
 
     formLogin.reset();
 
@@ -213,8 +220,15 @@ function atualizarEstadoConta() {
 function sairDaConta() {
 
     usuarioAtual = null;
+    recompensaSelecionada = null;
 
     atualizarEstadoConta();
+    atualizarRecompensasCheckout();
+
+    if (typeof renderizarAcompanhamento === "function" &&
+        !document.getElementById("modalAcompanhamento")?.hidden) {
+        renderizarAcompanhamento();
+    }
 }
 
 
